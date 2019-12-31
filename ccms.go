@@ -6,13 +6,14 @@ import (
 	"path"
 
 	"github.com/CCDirectLink/ccms/cmd/cmd"
-	util "github.com/CCDirectlink/ccms/cmd/util"
+	"github.com/CCDirectLink/ccms/cmd/help"
+	"github.com/CCDirectLink/ccms/cmd/util"
 )
 
 func main() {
 
 	if len(os.Args) == 1 {
-		util.PrintHelp()
+		help.Default()
 		return
 	}
 
@@ -29,8 +30,10 @@ func main() {
 	if err != nil {
 		basePackage = util.InitPackage()
 	}
-
+	
 	switch op {
+	case "new":
+		cmd.New(wd)
 	case "init":
 		cmd.Init(basePackage)
 		util.SavePackage(wd, basePackage)
