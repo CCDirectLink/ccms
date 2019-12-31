@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"path"
+	"regexp"
+	"strings"
 )
 
 // Package represents a CrossCode Mod package.json file
@@ -66,4 +68,18 @@ func SavePackage(folderPath string, pkg *Package) (bool, error) {
 	pkgStr, _ := json.Marshal(pkg)
 	file.WriteString(string(pkgStr))
 	return true, nil
+}
+
+func FormatPackageName(name string) string {
+	name = strings.ToLower(name)
+
+	re := regexp.MustCompile(`/|\\`)
+	name = re.ReplaceAllString(name, "")
+
+	name = strings.Trim(name, "\t \n")
+
+	re = regexp.MustCompile(`\s+`)
+	name = re.ReplaceAllString(name, "-")
+
+	return name
 }
