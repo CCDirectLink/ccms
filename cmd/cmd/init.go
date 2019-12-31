@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	util "github.com/CCDirectlink/ccms/cmd/util"
-	cli "github.com/CCDirectlink/ccms/cmd/util/cli"
+	"github.com/CCDirectLink/ccms/cmd/util"
+	"github.com/CCDirectlink/ccms/cmd/cli"
 )
 
 func printFormat(formatStr string, str string) string {
@@ -21,7 +21,7 @@ func Init(pkg *util.Package) {
 	name := cli.Prompt(fmt.Sprintf("name (%s):", pkg.Name))
 
 	if name != "" {
-		pkg.Name = name
+		pkg.Name = util.FormatPackageName(name)
 	}
 
 	version := cli.Prompt(fmt.Sprintf("version (%s):", pkg.Version))
