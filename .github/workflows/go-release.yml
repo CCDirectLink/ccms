@@ -14,7 +14,14 @@ jobs:
         id: go
       -
         name: Checkout
-        uses: actions/checkout@v1 
+        uses: actions/checkout@v1
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+          if [ -f Gopkg.toml ]; then
+              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+              dep ensure
+          fi
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v1
