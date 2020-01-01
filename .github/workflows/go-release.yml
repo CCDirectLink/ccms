@@ -11,8 +11,12 @@ jobs:
         uses: actions/setup-go@v1
         with:
           go-version: 1.13.x
-          path: 'github.com/CCDirectLink'
         id: go
+      - 
+        name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+        with:
+          path: 'github.com/CCDirectLink'
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v1
