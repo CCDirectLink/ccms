@@ -30,10 +30,13 @@ func main() {
 	if err != nil {
 		basePackage = util.InitPackage()
 	}
-	
+
 	switch op {
 	case "new":
-		cmd.New(wd)
+		wd = cmd.New(wd, basePackage)
+		if wd != "" {
+			util.SavePackage(wd, basePackage)
+		}
 	case "init":
 		cmd.Init(basePackage)
 		util.SavePackage(wd, basePackage)
