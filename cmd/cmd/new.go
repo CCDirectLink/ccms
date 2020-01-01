@@ -6,8 +6,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/CCDirectLink/ccms/cmd/help"
-	"github.com/CCDirectLink/ccms/cmd/util"
+	"github.com/CCDirectLink/ccms-new/cmd/help"
+	"github.com/CCDirectLink/ccms-new/cmd/util"
 )
 
 // New test
@@ -30,9 +30,8 @@ func New(wd string, pkg *util.Package) string {
 		if os.IsExist(err) {
 			fmt.Printf("mod %s already exists", name)
 			return ""
-		} else {
-			panic(err)
 		}
+		panic(err)
 	}
 
 	err = os.Mkdir(path.Join(newWd, "assets"), 0666)
