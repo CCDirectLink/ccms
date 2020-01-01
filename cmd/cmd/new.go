@@ -21,7 +21,7 @@ func New(wd string, pkg *util.Package) string {
 
 	name = util.FormatPackageName(name)
 
-	pkg.Name = name
+	pkg.Name = name // test
 
 	newWd := path.Join(wd, name)
 	err := os.Mkdir(newWd, 0666)
