@@ -5,9 +5,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/CCDirectLink/ccms-new/cmd/cmd"
-	"github.com/CCDirectLink/ccms-new/cmd/help"
-	"github.com/CCDirectLink/ccms-new/cmd/util"
+	"github.com/CCDirectLink/ccms/cmd/cmd"
+	"github.com/CCDirectLink/ccms/cmd/help"
+	"github.com/CCDirectLink/ccms/cmd/util"
 )
 
 func main() {

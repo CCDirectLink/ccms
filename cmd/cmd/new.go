@@ -6,8 +6,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/CCDirectLink/ccms-new/cmd/help"
-	"github.com/CCDirectLink/ccms-new/cmd/util"
+	"github.com/CCDirectLink/ccms/cmd/help"
+	"github.com/CCDirectLink/ccms/cmd/util"
 )
 
 // New test

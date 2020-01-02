@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/CCDirectLink/ccms-new/cmd/util"
-	"github.com/CCDirectLink/ccms-new/cmd/cli"
+	"github.com/CCDirectLink/ccms/cmd/util"
+	"github.com/CCDirectLink/ccms/cmd/cli"
 )
 
 func printFormat(formatStr string, str string) string {
