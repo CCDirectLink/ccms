@@ -40,6 +40,8 @@ func main() {
 	case "init":
 		cmd.Init(basePackage)
 		util.SavePackage(wd, basePackage)
+	case "install":
+		cmd.Install(basePackage)
 	default:
 		fmt.Printf("Invalid command: %s", op)
 	}
