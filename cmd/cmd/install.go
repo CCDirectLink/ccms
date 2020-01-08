@@ -1,23 +1,97 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
-	"os"
+	"path/filepath"
 
-	test "github.com/CCDirectLink/CCUpdaterCLI/cmd"
+	"github.com/CCDirectLink/ccms/internal/database/generic"
+
 	"github.com/CCDirectLink/ccms/cmd/util"
+	"github.com/CCDirectLink/ccms/internal/database"
+	"github.com/CCDirectLink/ccms/internal/mods"
+	"github.com/Masterminds/semver"
 )
 
-// Install a mod
-func Install(pkg *util.Package) {
-	names := os.Args[2:]
-	stats, err := test.Install(names)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(*stats)
+// Install a mod and add to package.json
+func Install(gamePath string, name string, pkg *util.Package) error {
 
 	fmt.Println(pkg)
+
+	entry, err := install(gamePath, name)
+
+	if err != nil {
+		return err
+	}
+
+	if pkg.ModDep == nil {
+		pkg.ModDep = make(map[string]string)
+	}
+
+	pkg.ModDep[entry.Name] = entry.Version
+
+	return nil
+}
+
+func installDependencies(gamePath string, name string) {
+
+}
+
+func install(gamePath string, name string) (*generic.ModEntry, error) {
+
+	hasModLocally := database.HasMod(name, "local")
+
+	// does it even exist?
+	hasModGlobally := database.HasMod(name, "ccmoddb")
+
+	if !hasModGlobally {
+		panic(errors.New("doesn't have mod"))
+	}
+
+	if hasModGlobally && hasModLocally {
+		localMod := database.GetMod(name, "local")
+		globalMod := database.GetMod(name, "ccmoddb")
+
+		localVer, err := semver.NewVersion(localMod.Version)
+
+		if err != nil {
+			return nil, err
+		}
+
+		globalVer, err := semver.NewVersion(globalMod.Version)
+
+		if globalVer.GreaterThan(localVer) {
+			fmt.Println("updating...might break mods that depend on it")
+		} else if globalVer.Equal(localVer) {
+			fmt.Println("update to date")
+			return localMod, nil
+		} else {
+			fmt.Println("downgrading is not support")
+			return nil, nil
+		}
+	}
+
+	// try downloading mods
+	fileDesc, err := mods.Download(name, "ccmoddb")
+
+	if err != nil {
+		panic(err)
+	}
+
+	filePath, err := mods.Extract(fileDesc)
+
+	if err != nil {
+		panic(err)
+	}
+
+	somePath := mods.FindPackage(filePath, name)
+
+	// copy
+
+	err = mods.Copy(filepath.Dir(somePath), filepath.Join(gamePath, "mods", name, "."))
+
+	if err != nil {
+		panic(err)
+	}
+	return database.GetMod(name, "ccmoddb"), nil
 }
