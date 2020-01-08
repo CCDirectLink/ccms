@@ -8,6 +8,7 @@ import (
 	"github.com/CCDirectLink/ccms/cmd/cmd"
 	"github.com/CCDirectLink/ccms/cmd/help"
 	"github.com/CCDirectLink/ccms/cmd/util"
+	"github.com/CCDirectLink/ccms/internal/game"
 )
 
 func main() {
@@ -27,8 +28,10 @@ func main() {
 
 	basePackage, err := util.GetPackage(path.Join(wd, "package.json"))
 
+	hasPackage := true
 	if err != nil {
 		basePackage = util.InitPackage()
+		hasPackage = false
 	}
 
 	switch op {
@@ -41,7 +44,34 @@ func main() {
 		cmd.Init(basePackage)
 		util.SavePackage(wd, basePackage)
 	case "install":
-		cmd.Install(basePackage)
+
+		if len(os.Args) < 3 {
+			fmt.Println("main: must supply mod names")
+			return
+		}
+
+		if !hasPackage {
+			fmt.Println("main: could not find package.json in current directory")
+			return
+		}
+		// first find game path
+		gamePath, err := game.Find(wd)
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		names := os.Args[2:]
+
+		// download
+		err = cmd.Install(gamePath, names[0], basePackage)
+
+		if err != nil {
+			panic(err)
+		}
+
+		util.SavePackage(wd, basePackage)
 	default:
 		fmt.Printf("Invalid command: %s", op)
 	}
