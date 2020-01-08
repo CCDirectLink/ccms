@@ -7,7 +7,8 @@ import (
 	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
-// Extract h
+// Extract a zip file and returns the extracted path
+// extracted path empty if it failed
 func Extract(fileDesc *os.File) (string, error) {
 
 	filePath, err := extract(fileDesc)

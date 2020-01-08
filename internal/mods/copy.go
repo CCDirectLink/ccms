@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Copy something
+// Copy folder from src to dest
 func Copy(src string, dest string) error {
 	e := filepath.Walk(src, func(currentPath string, info os.FileInfo, err error) error {
 
@@ -15,9 +15,9 @@ func Copy(src string, dest string) error {
 		destPath := filepath.Join(dest, relativePath)
 
 		if info.IsDir() {
-			return CopyDir(info, destPath)
+			return copyDir(info, destPath)
 		}
-		return CopyFile(info, currentPath, destPath)
+		return copyFile(info, currentPath, destPath)
 	})
 
 	if e != nil {
@@ -26,8 +26,7 @@ func Copy(src string, dest string) error {
 	return nil
 }
 
-// CopyFile copies a file from src to dest path
-func CopyFile(info os.FileInfo, src string, dest string) error {
+func copyFile(info os.FileInfo, src string, dest string) error {
 	file, err := os.Open(src)
 
 	if err != nil {
@@ -54,8 +53,7 @@ func CopyFile(info os.FileInfo, src string, dest string) error {
 	return newFile.Sync()
 }
 
-// CopyDir makes a directory
-func CopyDir(info os.FileInfo, dest string) error {
+func copyDir(info os.FileInfo, dest string) error {
 	err := os.MkdirAll(dest, info.Mode())
 
 	if err != nil {

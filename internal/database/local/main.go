@@ -41,19 +41,21 @@ func getMods(dir string) *generic.ModList {
 		log.Fatal(err)
 	}
 
+	assetsPath, _ := game.Find(dir)
+
 	list = new(generic.ModList)
 
 	list.Mods = make(map[string]generic.ModEntry)
+
 	for _, file := range files {
+		if file.IsDir() {
+			modPath := path.Join(assetsPath, "mods", file.Name())
+			if folderIsMod(modPath) {
+				packagePath := path.Join(modPath, "package.json")
+				modEntry := generateModEntryFrom(packagePath)
 
-		assetsPath, _ := game.Find(dir)
-
-		modPath := path.Join(assetsPath, "mods", file.Name())
-		if folderIsMod(modPath) {
-			packagePath := path.Join(modPath, "package.json")
-			modEntry := generateModEntryFrom(packagePath)
-
-			list.Mods[modEntry.Name] = *modEntry
+				list.Mods[modEntry.Name] = *modEntry
+			}
 		}
 	}
 

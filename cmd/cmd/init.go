@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/CCDirectLink/ccms/cmd/util"
 	"github.com/CCDirectLink/ccms/cmd/cli"
+	"github.com/CCDirectLink/ccms/cmd/util"
 )
 
 func printFormat(formatStr string, str string) string {
@@ -14,7 +14,7 @@ func printFormat(formatStr string, str string) string {
 	return fmt.Sprintf(formatStr, str)
 }
 
-// Init initalizes a package
+// Init a mod package file
 func Init(pkg *util.Package) {
 
 	// basics

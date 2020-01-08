@@ -9,7 +9,8 @@ import (
 	"github.com/CCDirectLink/ccms/cmd/util"
 )
 
-// FindPackage a
+// FindPackage by some basePath using the canonical name of the mod
+// returns an empty string if not found
 func FindPackage(basePath string, name string) string {
 	libRegEx, e := regexp.Compile("package.json$")
 

@@ -12,7 +12,7 @@ import (
 	"github.com/CCDirectLink/ccms/internal/database"
 )
 
-// Download a mod by name
+// Download a nonpacked mod by name with db source
 func Download(name string, db dbtype.DBType) (*os.File, error) {
 
 	mod := database.GetMod(name, db)
@@ -30,7 +30,6 @@ func Download(name string, db dbtype.DBType) (*os.File, error) {
 	return fileDesc, nil
 }
 
-// Download a nonpacked mod zip file from url
 func download(url string) (*os.File, error) {
 
 	resp, err := http.Get(url)
