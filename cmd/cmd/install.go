@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/CCDirectLink/ccms/internal/database/dbtype"
 	"github.com/CCDirectLink/ccms/internal/database/generic"
 
 	"github.com/CCDirectLink/ccms/cmd/util"
@@ -39,18 +40,18 @@ func installDependencies(gamePath string, name string) {
 
 func install(gamePath string, name string) (*generic.ModEntry, error) {
 
-	hasModLocally := database.HasMod(name, "local")
+	hasModLocally := database.HasMod(name, dbtype.LocalDB)
 
 	// does it even exist?
-	hasModGlobally := database.HasMod(name, "ccmoddb")
+	hasModGlobally := database.HasMod(name, dbtype.CCModDB)
 
 	if !hasModGlobally {
 		panic(errors.New("doesn't have mod"))
 	}
 
 	if hasModGlobally && hasModLocally {
-		localMod := database.GetMod(name, "local")
-		globalMod := database.GetMod(name, "ccmoddb")
+		localMod := database.GetMod(name, dbtype.LocalDB)
+		globalMod := database.GetMod(name, dbtype.CCModDB)
 
 		localVer, err := semver.NewVersion(localMod.Version)
 
@@ -72,7 +73,7 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 	}
 
 	// try downloading mods
-	fileDesc, err := mods.Download(name, "ccmoddb")
+	fileDesc, err := mods.Download(name, dbtype.CCModDB)
 
 	if err != nil {
 		panic(err)
@@ -93,5 +94,5 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 	if err != nil {
 		panic(err)
 	}
-	return database.GetMod(name, "ccmoddb"), nil
+	return database.GetMod(name, dbtype.CCModDB), nil
 }

@@ -2,19 +2,20 @@ package database
 
 import (
 	"github.com/CCDirectLink/ccms/internal/database/ccmoddb"
+	"github.com/CCDirectLink/ccms/internal/database/dbtype"
 	"github.com/CCDirectLink/ccms/internal/database/generic"
 	"github.com/CCDirectLink/ccms/internal/database/local"
 )
 
 // GetMods h
-func GetMods(searchType string) *generic.ModList {
+func GetMods(searchType dbtype.DBType) *generic.ModList {
 	var mods *generic.ModList
 
 	switch searchType {
-	case "ccmoddb":
-		mods = ccmoddb.GetMods()
-	case "local":
+	case dbtype.LocalDB:
 		mods = local.GetMods()
+	case dbtype.CCModDB:
+		mods = ccmoddb.GetMods()
 	default:
 		mods = nil
 	}
@@ -22,7 +23,7 @@ func GetMods(searchType string) *generic.ModList {
 }
 
 // GetMod h
-func GetMod(name string, searchType string) *generic.ModEntry {
+func GetMod(name string, searchType dbtype.DBType) *generic.ModEntry {
 	mods := GetMods(searchType)
 
 	if HasMod(name, searchType) {
@@ -33,7 +34,7 @@ func GetMod(name string, searchType string) *generic.ModEntry {
 }
 
 // HasMod h
-func HasMod(name string, searchType string) bool {
+func HasMod(name string, searchType dbtype.DBType) bool {
 
 	mods := GetMods(searchType)
 

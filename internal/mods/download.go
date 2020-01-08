@@ -7,13 +7,15 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/CCDirectLink/ccms/internal/database/dbtype"
+
 	"github.com/CCDirectLink/ccms/internal/database"
 )
 
 // Download a mod by name
-func Download(name string, dbType string) (*os.File, error) {
+func Download(name string, db dbtype.DBType) (*os.File, error) {
 
-	mod := database.GetMod(name, dbType)
+	mod := database.GetMod(name, db)
 
 	if mod == nil {
 		return nil, errors.New("mod does not exist")
