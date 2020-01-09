@@ -5,32 +5,39 @@ import (
 	"os"
 	"path"
 
+	"flag"
+
 	"github.com/CCDirectLink/ccms/cmd/cmd"
 	"github.com/CCDirectLink/ccms/cmd/help"
-	"github.com/CCDirectLink/ccms/cmd/util"
-	"github.com/CCDirectLink/ccms/internal/game"
+	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
 func main() {
 
-	if len(os.Args) == 1 {
+	var workdir *string
+	dir, err := os.Getwd()
+
+	workdir = flag.String("wd", dir, "a string")
+
+	flag.Parse()
+
+	if flag.NArg() < 1 {
 		help.Default()
 		return
 	}
 
-	wd, err := os.Getwd()
-
+	wd := *workdir
 	if err != nil {
 		panic(err)
 	}
 
-	op := os.Args[1]
+	op := flag.Arg(0)
 
-	basePackage, err := util.GetPackage(path.Join(wd, "package.json"))
+	basePackage, err := utils.GetPackage(path.Join(wd, "package.json"))
 
 	hasPackage := true
 	if err != nil {
-		basePackage = util.InitPackage()
+		basePackage = utils.InitPackage()
 		hasPackage = false
 	}
 
@@ -38,14 +45,14 @@ func main() {
 	case "new":
 		wd = cmd.New(wd, basePackage)
 		if wd != "" {
-			util.SavePackage(wd, basePackage)
+			utils.SavePackage(wd, basePackage)
 		}
 	case "init":
 		cmd.Init(basePackage)
-		util.SavePackage(wd, basePackage)
+		utils.SavePackage(wd, basePackage)
 	case "install":
 
-		if len(os.Args) < 3 {
+		if flag.NArg() < 2 {
 			fmt.Println("main: must supply mod names")
 			return
 		}
@@ -54,24 +61,23 @@ func main() {
 			fmt.Println("main: could not find package.json in current directory")
 			return
 		}
-		// first find game path
-		gamePath, err := game.Find(wd)
 
-		if err != nil {
-			fmt.Println(err)
-			return
+		names := flag.Args()[1:]
+
+		stats := []*cmd.InstallStats{}
+		cmd.Install(wd, names[0], stats)
+
+		if len(stats) > 0 {
+			if stats[0].Err != nil {
+				panic(stats[0].Err)
+			}
 		}
 
-		names := os.Args[2:]
+		/*if pkg.ModDep != nil {
+			pkg.ModDep[entry.Name] = entry.Version
+		}*/
 
-		// download
-		err = cmd.Install(gamePath, names[0], basePackage)
-
-		if err != nil {
-			panic(err)
-		}
-
-		util.SavePackage(wd, basePackage)
+		utils.SavePackage(wd, basePackage)
 	default:
 		fmt.Printf("Invalid command: %s", op)
 	}
