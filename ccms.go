@@ -52,17 +52,21 @@ func main() {
 		utils.SavePackage(wd, basePackage)
 	case "install":
 
-		if flag.NArg() < 2 {
-			fmt.Println("main: must supply mod names")
-			return
-		}
-
 		if !hasPackage {
 			fmt.Println("main: could not find package.json in current directory")
 			return
 		}
 
-		names := flag.Args()[1:]
+		names := make([]string, 0)
+		if flag.NArg() > 1 {
+			fmt.Println("install: using cmd args to install")
+			names = flag.Args()[1:]
+		} else {
+			fmt.Println("install: using package mod dep keys to install")
+			for key := range basePackage.ModDep {
+				names = append(names, key)
+			}
+		}
 
 		for _, name := range names {
 			stats := []*cmd.InstallStats{}
@@ -78,9 +82,8 @@ func main() {
 				entry := stat.Entry
 				basePackage.ModDep[entry.Name] = entry.Version
 			}
-
-			utils.SavePackage(wd, basePackage)
 		}
+		utils.SavePackage(wd, basePackage)
 
 	default:
 		fmt.Printf("Invalid command: %s", op)
