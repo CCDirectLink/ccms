@@ -1,4 +1,4 @@
-package util
+package utils
 
 import (
 	"encoding/json"
@@ -28,7 +28,7 @@ type Package struct {
 	Dep    map[string]string `json:"dependencies,omitempty"`
 }
 
-// GetPackage takes a filePath and returns a Package or erro
+// GetPackage takes a filePath and returns a Package or error
 func GetPackage(filePath string) (*Package, error) {
 
 	file, err := os.Open(filePath)
@@ -44,6 +44,10 @@ func GetPackage(filePath string) (*Package, error) {
 		return nil, err
 	}
 
+	if data.ModDep == nil {
+		data.ModDep = make(map[string]string)
+	}
+
 	return data, nil
 }
 
@@ -53,6 +57,7 @@ func InitPackage() *Package {
 	return &Package{
 		Name:    "new-mod",
 		Version: "0.0.0",
+		ModDep:  make(map[string]string),
 	}
 }
 
@@ -65,11 +70,12 @@ func SavePackage(folderPath string, pkg *Package) (bool, error) {
 	}
 	defer file.Close()
 
-	pkgStr, _ := json.Marshal(pkg)
+	pkgStr, _ := json.MarshalIndent(pkg, "", "\t")
 	file.WriteString(string(pkgStr))
 	return true, nil
 }
 
+// FormatPackageName to npm like spec
 func FormatPackageName(name string) string {
 	name = strings.ToLower(name)
 
