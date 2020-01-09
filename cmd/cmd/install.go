@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/CCDirectLink/ccms/pkg/logger"
+	"github.com/CCDirectLink/ccms/internal/logger"
 
-	"github.com/CCDirectLink/ccms/pkg/database"
-	"github.com/CCDirectLink/ccms/pkg/database/dbtype"
-	"github.com/CCDirectLink/ccms/pkg/database/generic"
-	"github.com/CCDirectLink/ccms/pkg/game"
-	"github.com/CCDirectLink/ccms/pkg/mods"
-	"github.com/CCDirectLink/ccms/pkg/utils"
+	"github.com/CCDirectLink/ccms/internal/database"
+	"github.com/CCDirectLink/ccms/internal/database/dbtype"
+	"github.com/CCDirectLink/ccms/internal/database/generic"
+	"github.com/CCDirectLink/ccms/internal/game"
+	"github.com/CCDirectLink/ccms/internal/mods"
+	"github.com/CCDirectLink/ccms/internal/utils"
 	"github.com/Masterminds/semver"
 )
 

@@ -9,8 +9,8 @@ import (
 
 	"github.com/CCDirectLink/ccms/cmd/cmd"
 	"github.com/CCDirectLink/ccms/cmd/help"
-	"github.com/CCDirectLink/ccms/pkg/logger"
-	"github.com/CCDirectLink/ccms/pkg/utils"
+	"github.com/CCDirectLink/ccms/internal/logger"
+	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
 func main() {

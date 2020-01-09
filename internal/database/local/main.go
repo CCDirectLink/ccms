@@ -10,8 +10,8 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/CCDirectLink/ccms/pkg/database/generic"
-	"github.com/CCDirectLink/ccms/pkg/game"
+	"github.com/CCDirectLink/ccms/internal/database/generic"
+	"github.com/CCDirectLink/ccms/internal/game"
 )
 
 // GetMods returns available mods

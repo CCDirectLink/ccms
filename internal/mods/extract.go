@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/CCDirectLink/ccms/pkg/utils"
+	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
 // Extract a zip file and returns the extracted path

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/CCDirectLink/ccms/cmd/cli"
-	"github.com/CCDirectLink/ccms/pkg/utils"
+	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
 func printFormat(formatStr string, str string) string {

@@ -1,10 +1,10 @@
 package database
 
 import (
-	"github.com/CCDirectLink/ccms/pkg/database/ccmoddb"
-	"github.com/CCDirectLink/ccms/pkg/database/dbtype"
-	"github.com/CCDirectLink/ccms/pkg/database/generic"
-	"github.com/CCDirectLink/ccms/pkg/database/local"
+	"github.com/CCDirectLink/ccms/internal/database/ccmoddb"
+	"github.com/CCDirectLink/ccms/internal/database/dbtype"
+	"github.com/CCDirectLink/ccms/internal/database/generic"
+	"github.com/CCDirectLink/ccms/internal/database/local"
 )
 
 // GetMods h
