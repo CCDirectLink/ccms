@@ -1,4 +1,4 @@
-package util
+package utils
 
 import (
 	"encoding/json"
@@ -28,7 +28,7 @@ type Package struct {
 	Dep    map[string]string `json:"dependencies,omitempty"`
 }
 
-// GetPackage takes a filePath and returns a Package or erro
+// GetPackage takes a filePath and returns a Package or error
 func GetPackage(filePath string) (*Package, error) {
 
 	file, err := os.Open(filePath)
@@ -70,6 +70,7 @@ func SavePackage(folderPath string, pkg *Package) (bool, error) {
 	return true, nil
 }
 
+// FormatPackageName to npm like spec
 func FormatPackageName(name string) string {
 	name = strings.ToLower(name)
 

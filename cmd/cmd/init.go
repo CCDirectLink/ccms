@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/CCDirectLink/ccms/cmd/cli"
-	"github.com/CCDirectLink/ccms/cmd/util"
+	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
 func printFormat(formatStr string, str string) string {
@@ -15,13 +15,13 @@ func printFormat(formatStr string, str string) string {
 }
 
 // Init a mod package file
-func Init(pkg *util.Package) {
+func Init(pkg *utils.Package) {
 
 	// basics
 	name := cli.Prompt(fmt.Sprintf("name (%s):", pkg.Name))
 
 	if name != "" {
-		pkg.Name = util.FormatPackageName(name)
+		pkg.Name = utils.FormatPackageName(name)
 	}
 
 	version := cli.Prompt(fmt.Sprintf("version (%s):", pkg.Version))

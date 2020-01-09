@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/CCDirectLink/ccms/cmd/help"
-	"github.com/CCDirectLink/ccms/cmd/util"
+	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
 // New test
-func New(wd string, pkg *util.Package) string {
+func New(wd string, pkg *utils.Package) string {
 	if len(os.Args) < 3 {
 		help.New()
 		return ""
@@ -19,7 +19,7 @@ func New(wd string, pkg *util.Package) string {
 
 	name := strings.Join(os.Args[2:], " ")
 
-	name = util.FormatPackageName(name)
+	name = utils.FormatPackageName(name)
 
 	pkg.Name = name // test
 

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/CCDirectLink/ccms/cmd/util"
+	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
 // FindPackage by some basePath using the canonical name of the mod
@@ -30,7 +30,7 @@ func FindPackage(basePath string, name string) string {
 		}
 
 		if err == nil && libRegEx.MatchString(info.Name()) {
-			pkg, err := util.GetPackage(walkPath)
+			pkg, err := utils.GetPackage(walkPath)
 
 			if err != nil {
 				panic(err)
