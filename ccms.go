@@ -76,7 +76,7 @@ func main() {
 			stat := cmd.Install(wd, name, stats)
 
 			if stat != nil {
-				if stat.Err != nil {
+				if stat.Err != "" {
 					panic(stat.Err)
 				}
 			}
