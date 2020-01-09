@@ -8,6 +8,7 @@ import (
 	"github.com/CCDirectLink/ccms/internal/database"
 	"github.com/CCDirectLink/ccms/internal/database/dbtype"
 	"github.com/CCDirectLink/ccms/internal/database/generic"
+	"github.com/CCDirectLink/ccms/internal/game"
 	"github.com/CCDirectLink/ccms/internal/mods"
 	"github.com/CCDirectLink/ccms/internal/utils"
 	"github.com/Masterminds/semver"
@@ -23,9 +24,22 @@ type InstallStats struct {
 // Install a mod and add to package.json
 func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 
-	fmt.Printf("Now installing %s\n", name)
+	if shouldIgnoreDependency(name) {
+		return &InstallStats{
+			Entry: nil,
+			Err:   nil,
+		}
+	}
 
-	entry, err := install(wd, name)
+	gamePath, err := game.Find(wd)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Now installing %s in \"%s\"\n", name, gamePath)
+
+	entry, err := install(gamePath, name)
 
 	modStat := new(InstallStats)
 
@@ -36,18 +50,39 @@ func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 
 	if err == nil {
 		// go through dependencies and install
-		packageData, err := utils.GetPackage(filepath.Join(modStat.Entry.Path, "package.json"))
-		if err != nil && packageData.ModDep != nil {
+
+		if entry == nil {
+			fmt.Println(entry)
+			return modStat
+		}
+
+		fmt.Printf("base path is %s for %s\n", entry.Path, entry.Name)
+
+		packageData, err := utils.GetPackage(filepath.Join(entry.Path, "package.json"))
+
+		if err != nil {
+			fmt.Printf("Error installing %s: %s", entry.Name, err)
+		}
+
+		if packageData != nil && packageData.ModDep != nil {
 			for depName := range packageData.ModDep {
-				depStat := Install(wd, depName, stats)
-				if depStat.Err != nil {
-					panic(depStat.Err)
-				}
+				Install(wd, depName, stats)
 			}
 		}
 	}
 
 	return modStat
+}
+
+func shouldIgnoreDependency(depName string) bool {
+	ignore := [...]string{"ccloader", "crosscode"}
+
+	for _, blacklist := range ignore {
+		if blacklist == depName {
+			return true
+		}
+	}
+	return false
 }
 
 func installDependencies(gamePath string, name string) error {
@@ -103,6 +138,10 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 
 	somePath := mods.FindPackage(filePath, name)
 
+	if somePath == "" {
+		return nil, fmt.Errorf("could not find package.json for %s", name)
+	}
+
 	// copy
 
 	err = mods.Copy(filepath.Dir(somePath), filepath.Join(gamePath, "mods", name, "."))
@@ -110,5 +149,5 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 	if err != nil {
 		panic(err)
 	}
-	return database.GetMod(name, dbtype.CCModDB), nil
+	return database.GetMod(name, dbtype.LocalDB), nil
 }
