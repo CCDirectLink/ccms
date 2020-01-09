@@ -21,7 +21,7 @@ func Download(name string, db dbtype.DBType) (*os.File, error) {
 		return nil, errors.New("mod does not exist")
 	}
 
-	fileDesc, err := download(mod.DownloadURL)
+	fileDesc, err := download(mod.Path)
 
 	if err != nil {
 		return nil, errors.New("failed to download mod")
