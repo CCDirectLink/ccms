@@ -85,10 +85,6 @@ func shouldIgnoreDependency(depName string) bool {
 	return false
 }
 
-func installDependencies(gamePath string, name string) error {
-	return nil
-}
-
 func install(gamePath string, name string) (*generic.ModEntry, error) {
 
 	hasModLocally := database.HasMod(name, dbtype.LocalDB)
