@@ -14,8 +14,8 @@ func Uninstall(wd string, name string, pkg *utils.Package) {
 
 	if !ok {
 		logger.Warn("uninstall", fmt.Sprintf("mod %s did not depend on %s", pkg.Name, name))
-	} else {
-		delete(pkg.ModDep, name)
+		return
 	}
-
+	delete(pkg.ModDep, name)
+	logger.Log("uninstall", fmt.Sprintf("dependency %s removed from %s", name, pkg.Name))
 }

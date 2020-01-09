@@ -92,12 +92,17 @@ func main() {
 			logger.Critical("main", "could not find package.json in current directory")
 			return
 		}
-
-		if flag.NArg() < 2 {
-			logger.Critical("uninstall", "must supply at least one mod name.")
+		names := make([]string, 0)
+		if flag.NArg() > 1 {
+			logger.Info("uninstall", "using cmd args to uninstall")
+			names = flag.Args()[1:]
+		} else {
+			logger.Info("uninstall", "using package mod dep keys to uninstall")
+			for key := range basePackage.ModDep {
+				names = append(names, key)
+			}
 		}
 
-		names := flag.Args()[1:]
 		for _, name := range names {
 			cmd.Uninstall(wd, name, basePackage)
 		}
