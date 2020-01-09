@@ -42,15 +42,15 @@ func main() {
 	}
 
 	switch op {
-	case "new":
+	case "new", "n":
 		wd = cmd.New(wd, basePackage)
 		if wd != "" {
 			utils.SavePackage(wd, basePackage)
 		}
-	case "init":
+	case "init", "in":
 		cmd.Init(basePackage)
 		utils.SavePackage(wd, basePackage)
-	case "install":
+	case "install", "i":
 
 		if !hasPackage {
 			fmt.Println("main: could not find package.json in current directory")
