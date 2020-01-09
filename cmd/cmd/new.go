@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/CCDirectLink/ccms/cmd/help"
-	"github.com/CCDirectLink/ccms/internal/utils"
+	"github.com/CCDirectLink/ccms/pkg/utils"
 )
 
 // New test

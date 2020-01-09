@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/CCDirectLink/ccms/internal/database/generic"
+	"github.com/CCDirectLink/ccms/pkg/database/generic"
 )
 
 var data *generic.ModList

@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/CCDirectLink/ccms/internal/database/dbtype"
+	"github.com/CCDirectLink/ccms/pkg/database/dbtype"
 
-	"github.com/CCDirectLink/ccms/internal/database"
+	"github.com/CCDirectLink/ccms/pkg/database"
 )
 
 // Download a nonpacked mod by name with db source

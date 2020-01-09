@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/CCDirectLink/ccms/internal/utils"
+	"github.com/CCDirectLink/ccms/pkg/utils"
 )
 
 // FindPackage by some basePath using the canonical name of the mod
