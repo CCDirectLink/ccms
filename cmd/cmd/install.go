@@ -5,37 +5,53 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/CCDirectLink/ccms/internal/database"
 	"github.com/CCDirectLink/ccms/internal/database/dbtype"
 	"github.com/CCDirectLink/ccms/internal/database/generic"
-
-	"github.com/CCDirectLink/ccms/cmd/util"
-	"github.com/CCDirectLink/ccms/internal/database"
 	"github.com/CCDirectLink/ccms/internal/mods"
+	"github.com/CCDirectLink/ccms/internal/utils"
 	"github.com/Masterminds/semver"
 )
 
-// Install a mod and add to package.json
-func Install(gamePath string, name string, pkg *util.Package) error {
-
-	fmt.Println(pkg)
-
-	entry, err := install(gamePath, name)
-
-	if err != nil {
-		return err
-	}
-
-	if pkg.ModDep == nil {
-		pkg.ModDep = make(map[string]string)
-	}
-
-	pkg.ModDep[entry.Name] = entry.Version
-
-	return nil
+// InstallStats provides useful information for a specific
+// mod installation
+type InstallStats struct {
+	Entry *generic.ModEntry
+	Err   error
 }
 
-func installDependencies(gamePath string, name string) {
+// Install a mod and add to package.json
+func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 
+	fmt.Printf("Now installing %s\n", name)
+
+	entry, err := install(wd, name)
+
+	modStat := new(InstallStats)
+
+	modStat.Entry = entry
+	modStat.Err = err
+
+	stats = append(stats, modStat)
+
+	if err == nil {
+		// go through dependencies and install
+		packageData, err := utils.GetPackage(filepath.Join(modStat.Entry.Path, "package.json"))
+		if err != nil && packageData.ModDep != nil {
+			for depName := range packageData.ModDep {
+				depStat := Install(wd, depName, stats)
+				if depStat.Err != nil {
+					panic(depStat.Err)
+				}
+			}
+		}
+	}
+
+	return modStat
+}
+
+func installDependencies(gamePath string, name string) error {
+	return nil
 }
 
 func install(gamePath string, name string) (*generic.ModEntry, error) {
@@ -64,7 +80,7 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 		if globalVer.GreaterThan(localVer) {
 			fmt.Println("updating...might break mods that depend on it")
 		} else if globalVer.Equal(localVer) {
-			fmt.Println("update to date")
+			fmt.Println("up to date")
 			return localMod, nil
 		} else {
 			fmt.Println("downgrading is not support")
