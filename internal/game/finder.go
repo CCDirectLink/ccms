@@ -3,7 +3,6 @@ package game
 import (
 	"errors"
 	"os"
-	"path"
 	"path/filepath"
 )
 
@@ -36,7 +35,7 @@ func Find(dir string) (string, error) {
 // GetModDirectory h
 func GetModDirectory(dir string) string {
 
-	moddir := path.Join(dir, "mods/")
+	moddir := filepath.Join(dir, "mods", ".")
 
 	if !folderExists(moddir) {
 		return ""
