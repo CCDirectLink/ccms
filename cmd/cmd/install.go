@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/CCDirectLink/ccms/internal/logger"
+
 	"github.com/CCDirectLink/ccms/internal/database"
 	"github.com/CCDirectLink/ccms/internal/database/dbtype"
 	"github.com/CCDirectLink/ccms/internal/database/generic"
@@ -17,7 +19,7 @@ import (
 // mod installation
 type InstallStats struct {
 	Entry *generic.ModEntry
-	Err   error
+	Err   string
 }
 
 // Install a mod and add to package.json
@@ -26,7 +28,7 @@ func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 	if shouldIgnoreDependency(name) {
 		return &InstallStats{
 			Entry: nil,
-			Err:   nil,
+			Err:   "",
 		}
 	}
 
@@ -35,18 +37,17 @@ func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 	if err != nil {
 		return &InstallStats{
 			Entry: nil,
-			Err:   fmt.Errorf("could not install %s. game directory not found", name),
+			Err:   logger.Critical("install", fmt.Sprintf("could not install %s. game directory not found", name)),
 		}
 	}
 
-	fmt.Printf("Now installing %s in \"%s\"\n", name, gamePath)
+	logger.Log("install", fmt.Sprintf("now installing %s in \"%s\"", name, gamePath))
 
-	entry, err := install(gamePath, name)
+	entry := install(gamePath, name)
 
 	modStat := new(InstallStats)
 
 	modStat.Entry = entry
-	modStat.Err = err
 
 	stats = append(stats, modStat)
 
@@ -54,16 +55,19 @@ func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 		// go through dependencies and install
 
 		if entry == nil {
-			fmt.Println(entry)
+			modStat.Err = logger.Critical("install", fmt.Sprintf("%s somehow returns nil", name))
 			return modStat
 		}
 
-		fmt.Printf("base path is %s for %s\n", filepath.Join(entry.Path, "."), entry.Name)
+		basePathInfo := fmt.Sprintf("base path is %s for %s", filepath.Join(entry.Path, "."), entry.Name)
+
+		logger.Info("install", basePathInfo)
 
 		packageData, err := utils.GetPackage(filepath.Join(entry.Path, "package.json"))
 
 		if err != nil {
-			fmt.Printf("Error installing %s: %s", entry.Name, err)
+			errMsg := fmt.Sprintf("error installing %s: %s", entry.Name, err.Error())
+			modStat.Err = logger.Critical("install", errMsg)
 		}
 
 		if packageData != nil && packageData.ModDep != nil {
@@ -71,6 +75,8 @@ func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 				Install(wd, depName, stats)
 			}
 		}
+	} else {
+		modStat.Err = err.Error()
 	}
 
 	return modStat
@@ -87,7 +93,7 @@ func shouldIgnoreDependency(depName string) bool {
 	return false
 }
 
-func install(gamePath string, name string) (*generic.ModEntry, error) {
+func install(gamePath string, name string) *generic.ModEntry {
 
 	hasModLocally := database.HasMod(name, dbtype.LocalDB)
 
@@ -102,42 +108,50 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 			localVer, err := semver.NewVersion(localMod.Version)
 
 			if err != nil {
-				return nil, err
+				errMsg := fmt.Sprintf("encounter error: %s", err.Error())
+				logger.Critical("install", errMsg)
+				return nil
 			}
 
 			globalVer, err := semver.NewVersion(globalMod.Version)
 
 			if globalVer.GreaterThan(localVer) {
-				fmt.Println("updating...might break mods that depend on it")
+				logger.Log("install", "updating...might break mods that depend on it")
 			} else if globalVer.Equal(localVer) {
-				fmt.Println("up to date")
-				return localMod, nil
+				logger.Log("install", "up to date")
+				return localMod
 			} else {
-				fmt.Println("downgrading is not support")
-				return nil, nil
+				logger.Critical("install", "downgrading is not support")
+				return nil
 			}
 		} else {
-			fmt.Printf("mod %s only available locally\n", name)
-			return database.GetMod(name, dbtype.LocalDB), nil
+			logger.Warn("install", fmt.Sprintf("mod %s only available locally", name))
+			return database.GetMod(name, dbtype.LocalDB)
 		}
 	}
 	// try downloading mods
 	fileDesc, err := mods.Download(name, dbtype.CCModDB)
 
 	if err != nil {
-		return nil, err
+		errMsg := fmt.Sprintf("encounter error: %s", err.Error())
+		logger.Critical("install", errMsg)
+		return nil
 	}
 
 	filePath, err := mods.Extract(fileDesc)
 
 	if err != nil {
-		return nil, err
+		errMsg := fmt.Sprintf("encounter error: %s", err.Error())
+		logger.Critical("install", errMsg)
+		return nil
 	}
 
 	somePath := mods.FindPackage(filePath, name)
 
 	if somePath == "" {
-		return nil, fmt.Errorf("could not find package.json for %s", name)
+		errMsg := fmt.Sprintf("could not find package.json for %s", name)
+		logger.Critical("install", errMsg)
+		return nil
 	}
 
 	// copy
@@ -145,7 +159,9 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 	err = mods.Copy(filepath.Dir(somePath), filepath.Join(gamePath, "mods", name, "."))
 
 	if err != nil {
-		return nil, err
+		errMsg := fmt.Sprintf("encounter error: %s", err.Error())
+		logger.Critical("install", errMsg)
+		return nil
 	}
-	return database.GetMod(name, dbtype.LocalDB), nil
+	return database.GetMod(name, dbtype.LocalDB)
 }
