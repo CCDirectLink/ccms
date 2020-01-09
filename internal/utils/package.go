@@ -70,7 +70,7 @@ func SavePackage(folderPath string, pkg *Package) (bool, error) {
 	}
 	defer file.Close()
 
-	pkgStr, _ := json.Marshal(pkg)
+	pkgStr, _ := json.MarshalIndent(pkg, "", "\t")
 	file.WriteString(string(pkgStr))
 	return true, nil
 }
