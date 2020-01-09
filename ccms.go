@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 
 	"flag"
 
@@ -33,7 +33,7 @@ func main() {
 
 	op := flag.Arg(0)
 
-	basePackage, err := utils.GetPackage(path.Join(wd, "package.json"))
+	basePackage, err := utils.GetPackage(filepath.Join(wd, "package.json"))
 
 	hasPackage := true
 	if err != nil {
