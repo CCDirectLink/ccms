@@ -25,10 +25,6 @@ func FindPackage(basePath string, name string) string {
 			return filepath.SkipDir
 		}
 
-		if info.IsDir() && info.Name() == "assets" {
-			return filepath.SkipDir
-		}
-
 		if err == nil && libRegEx.MatchString(info.Name()) {
 			pkg, err := utils.GetPackage(walkPath)
 
