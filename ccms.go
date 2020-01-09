@@ -64,20 +64,24 @@ func main() {
 
 		names := flag.Args()[1:]
 
-		stats := []*cmd.InstallStats{}
-		cmd.Install(wd, names[0], stats)
+		for _, name := range names {
+			stats := []*cmd.InstallStats{}
+			stat := cmd.Install(wd, name, stats)
 
-		if len(stats) > 0 {
-			if stats[0].Err != nil {
-				panic(stats[0].Err)
+			if stat != nil {
+				if stat.Err != nil {
+					panic(stat.Err)
+				}
 			}
+
+			if stat.Entry != nil {
+				entry := stat.Entry
+				basePackage.ModDep[entry.Name] = entry.Version
+			}
+
+			utils.SavePackage(wd, basePackage)
 		}
 
-		/*if pkg.ModDep != nil {
-			pkg.ModDep[entry.Name] = entry.Version
-		}*/
-
-		utils.SavePackage(wd, basePackage)
 	default:
 		fmt.Printf("Invalid command: %s", op)
 	}
