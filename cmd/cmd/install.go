@@ -117,7 +117,7 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 				return nil, nil
 			}
 		} else {
-			fmt.Printf("mod %s only available locally", name)
+			fmt.Printf("mod %s only available locally\n", name)
 			return database.GetMod(name, dbtype.LocalDB), nil
 		}
 	}
