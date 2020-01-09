@@ -44,6 +44,10 @@ func GetPackage(filePath string) (*Package, error) {
 		return nil, err
 	}
 
+	if data.ModDep == nil {
+		data.ModDep = make(map[string]string)
+	}
+
 	return data, nil
 }
 
@@ -53,6 +57,7 @@ func InitPackage() *Package {
 	return &Package{
 		Name:    "new-mod",
 		Version: "0.0.0",
+		ModDep:  make(map[string]string),
 	}
 }
 
