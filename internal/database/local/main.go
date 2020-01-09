@@ -3,10 +3,12 @@ package local
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/CCDirectLink/ccms/internal/database/generic"
 	"github.com/CCDirectLink/ccms/internal/game"
@@ -14,8 +16,12 @@ import (
 
 // GetMods returns available mods
 func GetMods() *generic.ModList {
-	dir, _ := os.Getwd()
-	dir, err := game.Find(dir)
+
+	var workdir *flag.Flag = flag.Lookup("wd")
+
+	wd := workdir.Value.String()
+
+	dir, err := game.Find(wd)
 
 	if err != nil {
 		panic(err)
@@ -75,9 +81,9 @@ func folderIsMod(dir string) bool {
 	return true
 }
 
-func generateModEntryFrom(path string) *generic.ModEntry {
+func generateModEntryFrom(packagePath string) *generic.ModEntry {
 
-	_file, err := os.Open(path)
+	_file, err := os.Open(packagePath)
 
 	if err != nil {
 		panic(err)
@@ -91,6 +97,8 @@ func generateModEntryFrom(path string) *generic.ModEntry {
 	if err != nil {
 		panic(err)
 	}
+
+	modData.Path = filepath.Dir(packagePath)
 
 	return modData
 }
