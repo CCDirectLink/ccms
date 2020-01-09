@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"path/filepath"
 
@@ -34,7 +33,10 @@ func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 	gamePath, err := game.Find(wd)
 
 	if err != nil {
-		panic(err)
+		return &InstallStats{
+			Entry: nil,
+			Err:   fmt.Errorf("could not install %s. game directory not found", name),
+		}
 	}
 
 	fmt.Printf("Now installing %s in \"%s\"\n", name, gamePath)
@@ -92,44 +94,44 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 	// does it even exist?
 	hasModGlobally := database.HasMod(name, dbtype.CCModDB)
 
-	if !hasModGlobally {
-		panic(errors.New("doesn't have mod"))
-	}
+	if hasModLocally {
+		if hasModGlobally {
+			localMod := database.GetMod(name, dbtype.LocalDB)
+			globalMod := database.GetMod(name, dbtype.CCModDB)
 
-	if hasModGlobally && hasModLocally {
-		localMod := database.GetMod(name, dbtype.LocalDB)
-		globalMod := database.GetMod(name, dbtype.CCModDB)
+			localVer, err := semver.NewVersion(localMod.Version)
 
-		localVer, err := semver.NewVersion(localMod.Version)
+			if err != nil {
+				return nil, err
+			}
 
-		if err != nil {
-			return nil, err
-		}
+			globalVer, err := semver.NewVersion(globalMod.Version)
 
-		globalVer, err := semver.NewVersion(globalMod.Version)
-
-		if globalVer.GreaterThan(localVer) {
-			fmt.Println("updating...might break mods that depend on it")
-		} else if globalVer.Equal(localVer) {
-			fmt.Println("up to date")
-			return localMod, nil
+			if globalVer.GreaterThan(localVer) {
+				fmt.Println("updating...might break mods that depend on it")
+			} else if globalVer.Equal(localVer) {
+				fmt.Println("up to date")
+				return localMod, nil
+			} else {
+				fmt.Println("downgrading is not support")
+				return nil, nil
+			}
 		} else {
-			fmt.Println("downgrading is not support")
-			return nil, nil
+			fmt.Printf("mod %s only available locally", name)
+			return database.GetMod(name, dbtype.LocalDB), nil
 		}
 	}
-
 	// try downloading mods
 	fileDesc, err := mods.Download(name, dbtype.CCModDB)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	filePath, err := mods.Extract(fileDesc)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	somePath := mods.FindPackage(filePath, name)
@@ -143,7 +145,7 @@ func install(gamePath string, name string) (*generic.ModEntry, error) {
 	err = mods.Copy(filepath.Dir(somePath), filepath.Join(gamePath, "mods", name, "."))
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	return database.GetMod(name, dbtype.LocalDB), nil
 }
