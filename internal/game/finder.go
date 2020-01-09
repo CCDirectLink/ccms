@@ -19,7 +19,7 @@ func Find(dir string) (string, error) {
 
 	if hasGame {
 
-		dir = filepath.ToSlash(path.Join(dir, "assets/"))
+		dir = filepath.Join(dir, "assets", ".")
 		cachePath = dir
 		return dir, nil
 	}
@@ -47,13 +47,13 @@ func GetModDirectory(dir string) string {
 
 func hasCrossCode(dir string) bool {
 
-	packagePath := path.Join(dir, "package.json")
+	packagePath := filepath.Join(dir, "package.json")
 
 	if !fileExists(packagePath) {
 		return false
 	}
 
-	mainHTML := path.Join(dir, "assets", "node-webkit.html")
+	mainHTML := filepath.Join(dir, "assets", "node-webkit.html")
 	if !fileExists(mainHTML) {
 		return false
 	}

@@ -56,7 +56,7 @@ func Install(wd string, name string, stats []*InstallStats) *InstallStats {
 			return modStat
 		}
 
-		fmt.Printf("base path is %s for %s\n", entry.Path, entry.Name)
+		fmt.Printf("base path is %s for %s\n", filepath.Join(entry.Path, "."), entry.Name)
 
 		packageData, err := utils.GetPackage(filepath.Join(entry.Path, "package.json"))
 
