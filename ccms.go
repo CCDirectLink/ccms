@@ -9,15 +9,16 @@ import (
 
 	"github.com/CCDirectLink/ccms/cmd/cmd"
 	"github.com/CCDirectLink/ccms/cmd/help"
+	"github.com/CCDirectLink/ccms/internal/logger"
 	"github.com/CCDirectLink/ccms/internal/utils"
 )
 
 func main() {
 
-	var workdir *string
 	dir, err := os.Getwd()
 
-	workdir = flag.String("wd", dir, "a string")
+	workdir := flag.String("wd", dir, "a string")
+	logLevel := flag.Int("log-level", logger.AllLevel, "set log level. default=15")
 
 	flag.Parse()
 
@@ -25,6 +26,8 @@ func main() {
 		help.Default()
 		return
 	}
+
+	logger.SetLogLevel(*logLevel)
 
 	wd := *workdir
 	if err != nil {
@@ -53,16 +56,16 @@ func main() {
 	case "install", "i":
 
 		if !hasPackage {
-			fmt.Println("main: could not find package.json in current directory")
+			logger.Critical("main", "could not find package.json in current directory")
 			return
 		}
 
 		names := make([]string, 0)
 		if flag.NArg() > 1 {
-			fmt.Println("install: using cmd args to install")
+			logger.Info("install", "using cmd args to install")
 			names = flag.Args()[1:]
 		} else {
-			fmt.Println("install: using package mod dep keys to install")
+			logger.Info("install", "using package mod dep keys to install")
 			for key := range basePackage.ModDep {
 				names = append(names, key)
 			}
