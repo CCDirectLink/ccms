@@ -7,6 +7,6 @@ import (
 
 // Default help
 func Default() {
-	fmt.Printf("Usage: %s <operation>\r\n", os.Args[0])
-	fmt.Println("<operation> = new, init")
+	fmt.Printf("Usage: %s <options> <operation> args\r\n", os.Args[0])
+	fmt.Println("<operation> = new, init, install")
 }

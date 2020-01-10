@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 var reader *bufio.Reader = bufio.NewReader(os.Stdin)
@@ -16,12 +17,5 @@ func Prompt(prompt string) string {
 	if err != nil {
 		panic(err)
 	}
-
-	if line[len(line)-2:len(line)] == "\r\n" {
-		line = line[0 : len(line)-2]
-	} else if line[len(line)-1] == '\n' {
-		line = line[0 : len(line)-1]
-	}
-
-	return line
+	return strings.TrimRight(line, "\r\n")
 }

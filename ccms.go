@@ -87,7 +87,26 @@ func main() {
 			}
 		}
 		utils.SavePackage(wd, basePackage)
+	case "uninstall", "ui":
+		if !hasPackage {
+			logger.Critical("main", "could not find package.json in current directory")
+			return
+		}
+		names := make([]string, 0)
+		if flag.NArg() > 1 {
+			logger.Info("uninstall", "using cmd args to uninstall")
+			names = flag.Args()[1:]
+		} else {
+			logger.Info("uninstall", "using package mod dep keys to uninstall")
+			for key := range basePackage.ModDep {
+				names = append(names, key)
+			}
+		}
 
+		for _, name := range names {
+			cmd.Uninstall(wd, name, basePackage)
+		}
+		utils.SavePackage(wd, basePackage)
 	default:
 		fmt.Printf("Invalid command: %s", op)
 	}
