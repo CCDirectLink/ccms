@@ -8,15 +8,15 @@ import (
 
 const (
 	// InfoLevel will be shown
-	InfoLevel = 0b0001
+	InfoLevel = 1
 	// LogLevel will be shown
-	LogLevel = 0b0010
+	LogLevel = 2
 	// WarnLevel will be shown
-	WarnLevel = 0b0100
+	WarnLevel = 4
 	// CriticalLevel will be shown
-	CriticalLevel = 0b1000
+	CriticalLevel = 8
 	// AllLevel will be shown
-	AllLevel = 0b1111
+	AllLevel = 15
 )
 
 var logLevel int = 0
