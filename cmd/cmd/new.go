@@ -32,12 +32,12 @@ func New(wd string, pkg *utils.Package) string {
 
 	if err != nil {
 		if os.IsExist(err) {
-			fmt.Printf("mod %s already exists", name)
+			logger.Warn("new", fmt.Sprintf("mod %s already exists", name))
+		} else {
+			modFolderErr := fmt.Sprintf("failed to create mod folder...%s", err.Error())
+			logger.Critical("new", modFolderErr)
 			return ""
 		}
-		modFolderErr := fmt.Sprintf("failed to create mod folder...%s", err.Error())
-		logger.Critical("new", modFolderErr)
-		return ""
 	}
 
 	err = os.Mkdir(path.Join(newWd, "assets"), 0755)
