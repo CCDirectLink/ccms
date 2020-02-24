@@ -16,6 +16,7 @@ type Package struct {
 	Version     string `json:"version"`
 	Description string `json:"description,omitempty"`
 	Module      bool   `json:"module,omitempty"`
+	Hidden      bool   `json:"hidden,omitempty"`
 
 	// script files
 	Preload  string `json:"preload,omitempty"`
