@@ -19,3 +19,21 @@ func Prompt(prompt string) string {
 	}
 	return strings.TrimRight(line, "\r\n")
 }
+
+// AskYesNo question to user
+func AskYesNo(prompt string) bool {
+	fmt.Printf("%s [Y/n]", prompt)
+	line, err := reader.ReadString('\n')
+
+	if err != nil {
+		panic(err)
+	}
+
+	line = strings.TrimRight(line, "\r\n")
+
+	if line == "Y" {
+		return true
+	}
+
+	return false
+}
