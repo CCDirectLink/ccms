@@ -36,6 +36,12 @@ func Init(pkg *utils.Package) {
 		pkg.Description = desc
 	}
 
+	homepage := cli.Prompt("homepage" + printFormat(" (%s)", pkg.Homepage) + ":")
+
+	if homepage != "" {
+		pkg.Homepage = homepage
+	}
+
 	// script files
 
 	preload := cli.Prompt("preload" + printFormat(" (%s)", pkg.Preload) + ":")
@@ -56,10 +62,14 @@ func Init(pkg *utils.Package) {
 		pkg.Prestart = prestart
 	}
 
+	pkg.Module = cli.AskYesNo("Load scripts as modules?")
+
 	plugin := cli.Prompt("plugin" + printFormat(" (%s)", pkg.Plugin) + ":")
 
 	if plugin != "" {
 		pkg.Plugin = plugin
 	}
+
+	pkg.Hidden = cli.AskYesNo("Hide mod from mods menu list?")
 
 }
