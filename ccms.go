@@ -49,10 +49,12 @@ func main() {
 		wd = cmd.New(wd, basePackage)
 		if wd != "" {
 			utils.SavePackage(wd, basePackage)
+			utils.MakeScripts(wd, basePackage)
 		}
 	case "init", "in":
 		cmd.Init(basePackage)
 		utils.SavePackage(wd, basePackage)
+		utils.MakeScripts(wd, basePackage)
 	case "install", "i":
 
 		if !hasPackage {
